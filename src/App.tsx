@@ -18,8 +18,6 @@ export default function App() {
   const [targetLanguage, setTargetLanguage] = useState<LanguageCode>('en');
   const [translatedText, setTranslatedText] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [ocrProvider, setOcrProvider] = useState('');
-  const [ocrConfidence, setOcrConfidence] = useState<number | null>(null);
 
   const activateCamera = async () => {
     setError(null);
@@ -30,7 +28,7 @@ export default function App() {
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -64,9 +62,7 @@ export default function App() {
     setError(null);
 
     try {
-      const { text, provider, confidence } = await extractTextFromImage(capturedImage);
-      setOcrProvider(provider);
-      setOcrConfidence(typeof confidence === 'number' ? confidence : null);
+      const { text } = await extractTextFromImage(capturedImage);
       if (!text) {
         setError('No se detectó texto en la imagen capturada.');
         setAppState('error');
@@ -143,7 +139,6 @@ export default function App() {
       <p className="status">Estado: {appState}</p>
       {appState === 'reading_text' && <p>Procesando OCR...</p>}
       {appState === 'translating' && <p>Traduciendo texto...</p>}
-      {ocrProvider && <p>Motor OCR: {ocrProvider}{ocrConfidence !== null ? ` (confianza media: ${ocrConfidence.toFixed(2)})` : ''}</p>}
       {error && <p className="error">{error}</p>}
 
       <OCRResult

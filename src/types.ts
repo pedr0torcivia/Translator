@@ -18,8 +18,6 @@ export interface LanguageOption {
 
 export interface OCRResponse {
   text: string;
-  provider: "local_tesseract" | "remote_ml";
-  confidence?: number;
 }
 
 export interface TranslationResponse {
